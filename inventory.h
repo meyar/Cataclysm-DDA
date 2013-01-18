@@ -5,8 +5,35 @@
 #include <string>
 #include <vector>
 
+#include <list>
+#include <stdint.h>
+#include <utility>
+
 class game;
 class map;
+
+class Inventory {
+  std::list< std::pair<item,size_t> > _inventory;
+
+  uint32_t _maxVolume;
+  uint32_t _maxWeight;
+
+ public:
+  Inventory() {
+    _maxVolume = UINT32_MAX;
+    _maxWeight = UINT32_MAX;
+  }
+
+  std::list< std::pair<item,size_t> >& items() { return _inventory; }
+
+  uint32_t volume();
+  uint32_t weight();
+
+  bool fits(const item& i);
+
+  bool addItem (item i);
+  item removeItem(size_t index, size_t count, size_t& removed);
+};
 
 class inventory
 {

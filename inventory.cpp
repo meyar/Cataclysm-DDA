@@ -492,3 +492,26 @@ void inventory::assign_empty_invlet(item &it, player *p)
  it.invlet = '`';
  //debugmsg("Couldn't find empty invlet");
 }
+
+
+uint32_t Inventory::volume() {
+  return 0;
+}
+
+uint32_t Inventory::weight() {
+  return 0;
+}
+
+bool Inventory::fits(const item& i) {
+  return false;
+}
+
+bool Inventory::addItem(item i) {
+  return false;
+}
+
+item removeItem(size_t index, size_t count, size_t& removed) {
+  removed = 0;
+
+  return item();
+}
