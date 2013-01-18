@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-#include <list>
 #include <stdint.h>
 #include <utility>
 
@@ -13,7 +12,7 @@ class game;
 class map;
 
 class Inventory {
-  std::list< std::pair<item,size_t> > _inventory;
+  std::vector< std::pair<item,size_t> > _inventory;
 
   uint32_t _maxVolume;
   uint32_t _maxWeight;
@@ -24,7 +23,9 @@ class Inventory {
     _maxWeight = UINT32_MAX;
   }
 
-  std::list< std::pair<item,size_t> >& items() { return _inventory; }
+  std::vector< std::pair<item,size_t> > items() const { return _inventory; }
+
+  std::pair<item,size_t> operator[] (size_t index) const { return _inventory[index]; }
 
   uint32_t volume();
   uint32_t weight();

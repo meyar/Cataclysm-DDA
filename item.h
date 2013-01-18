@@ -21,6 +21,9 @@ public:
  ~item();
  void make(itype* it);
 
+ bool operator== (const item& b) const;
+ bool operator<  (const item& b) const;
+
 // returns the default container of this item, with this item in it
  item in_its_container(std::vector<itype*> *itypes);
 
@@ -52,7 +55,7 @@ public:
  int price();
 
  bool invlet_is_okay();
- bool stacks_with(item rhs);
+ bool stacks_with(item rhs) const;
  void put_in(item payload);
 
  int weight();
@@ -66,7 +69,7 @@ public:
  int has_gunmod(int type);
  item* active_gunmod();
  std::vector<technique_id> techniques();
- bool goes_bad();
+ bool goes_bad() const;
  bool count_by_charges();
  bool craft_has_charges();
  int num_charges();
@@ -83,10 +86,10 @@ public:
  bool conductive(); // Electricity
  bool destroyed_at_zero_charges();
 // Most of the is_whatever() functions call the same function in our itype
- bool is_null(); // True if type is NULL, or points to the null item (id == 0)
+ bool is_null() const; // True if type is NULL, or points to the null item (id == 0)
  bool is_food(player *u);// Some non-food items are food to certain players
  bool is_food_container(player *u);  // Ditto
- bool is_food();                // Ignoring the ability to eat batteries, etc.
+ bool is_food() const;          // Ignoring the ability to eat batteries, etc.
  bool is_food_container();      // Ignoring the ability to eat batteries, etc.
  bool is_ammo_container();      
  bool is_drink();

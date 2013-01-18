@@ -166,7 +166,7 @@ void item::make(itype* it)
  contents.clear();
 }
 
-bool item::is_null()
+bool item::is_null() const
 {
  return (type == NULL || type->id == 0);
 }
@@ -206,7 +206,40 @@ bool item::invlet_is_okay()
  return ((invlet >= 'a' && invlet <= 'z') || (invlet >= 'A' && invlet <= 'Z'));
 }
 
-bool item::stacks_with(item rhs)
+bool item::operator== (const item& b) const {
+  return stacks_with(b);
+}
+
+bool item::operator<  (const item& b) const {
+  bool lt = (type->name < b.type->name           ||
+             (active && !b.active)               ||
+             charges < b.charges                 ||
+             contents.size() < b.contents.size() ||
+             damage < b.damage                   ||
+             (goes_bad() && bday < b.bday));
+
+  if (lt) {
+    return lt;
+  } else {
+
+    if (corpse && b.corpse) {
+      return corpse->name < b.corpse->name;
+    }
+
+    if (contents.size() < b.contents.size()) {
+      return true;
+    } else {
+      for (size_t i = 0; i < contents.size(); i++) {
+        if (contents[i] < b.contents[i])
+          return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+bool item::stacks_with(item rhs) const
 {
 
  bool stacks = (type   == rhs.type   && damage  == rhs.damage  &&
@@ -868,7 +901,7 @@ bool item::rotten(game *g)
  return (food->spoils != 0 && int(g->turn) - (int)bday > food->spoils * 600);
 }
 
-bool item::goes_bad()
+bool item::goes_bad() const
 {
  if (!is_food())
   return false;
@@ -1080,7 +1113,7 @@ bool item::is_food_container(player *u)
  return (contents.size() >= 1 && contents[0].is_food(u));
 }
 
-bool item::is_food()
+bool item::is_food() const
 {
  if( is_null() )
   return false;
