@@ -251,8 +251,7 @@ bool item::stacks_with(item rhs) const
      (corpse != NULL && rhs.corpse == NULL)   )
   return false;
 
- if (corpse != NULL && rhs.corpse != NULL &&
-     corpse->id != rhs.corpse->id)
+ if (corpse && rhs.corpse && (corpse != rhs.corpse || corpse->id != rhs.corpse->id))
   return false;
   
  if (contents.size() != rhs.contents.size())

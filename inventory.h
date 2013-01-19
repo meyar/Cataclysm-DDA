@@ -23,7 +23,7 @@ class Inventory {
     _maxWeight = UINT32_MAX;
   }
 
-  std::vector< std::pair<item,size_t> > items() const { return _inventory; }
+  const std::vector< std::pair<item,size_t> > &items() const { return _inventory; }
 
   std::pair<item,size_t> operator[] (size_t index) const { return _inventory[index]; }
 

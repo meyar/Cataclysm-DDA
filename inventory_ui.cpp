@@ -97,112 +97,67 @@ std::vector<int> find_firsts(inventory &inv)
 
  return firsts;
 }
- 
+
 // Display current inventory.
-char game::inv(std::string title)
-{
- WINDOW* w_inv = newwin(25, 80, 0, 0);
- const int maxitems = 20;	// Number of items to show at one time.
- char ch = '.';
- int start = 0, cur_it;
- u.sort_inv();
- u.inv.restack(&u);
- std::vector<char> null_vector;
- print_inv_statics(this, w_inv, title, null_vector);
+char game::inv(std::string title) {
+  WINDOW* w_inv = newwin(25, 80, 0, 0);
 
- const Inventory& inventory = u._inventory;
+  const int pageSize = 20;
+  char ch = '.';
 
- int page = 0;
+  u.sort_inv();
+  u.inv.restack(&u);
+  std::vector<char> null_vector;
+  print_inv_statics(this, w_inv, title, null_vector);
 
- do {
-   int currentLine = 2;
+  const std::vector< std::pair<item,size_t> >& inventory = u._inventory.items();
 
-   for (
-        std::vector< std::pair<item,size_t> >::const_iterator anItem = inventory.items().begin() + (maxitems * page);
-        anItem != inventory.items().end();
-        //((anItem != inventory.items().begin() + (maxitems * (page + 1))) && (anItem != inventory.items().end()));
-        ++anItem
-        ) {
-     const item& thisItem = anItem->first;
+  uint32_t page = 0;
 
-     mvwprintz(w_inv, currentLine, 0, thisItem.color_in_inventory(NULL), thisItem.tname(this).c_str());
-     if (thisItem.charges > 0) {
-       wprintw(w_inv, " (%d)", thisItem.charges);
-     } else if (thisItem.contents.size() == 1 && thisItem.contents[0].charges) {
-       wprintw(w_inv, " (%d)", thisItem.contents[0].charges);
-     }
-     if (anItem->second)
-       wprintw(w_inv, " [%d]", anItem->second);
+  do {
+    for (int i = 1; i < 25; i++)
+      mvwprintz(w_inv, i, 0, c_black, "                                        ");
 
-     ++currentLine;
-   }
-   wrefresh(w_inv);
-   ch = getch();
- } while (ch == '<' || ch == '>');
+    if (ch == '<' && page > 0)
+      --page;
 
- werase(w_inv);
- delwin(w_inv);
- erase();
- refresh_all();
- return ch;
+    if (ch == '>' && inventory.size() > (page + 1) * pageSize)
+      ++page;
 
-/*
-// Gun, ammo, weapon, armor, food, tool, book, other
- std::vector<int> firsts = find_firsts(u.inv);
+    int currentLine = 0;
 
- do {
-  if (ch == '<' && start > 0) { // Clear lines and shift
-   for (int i = 1; i < 25; i++)
-    mvwprintz(w_inv, i, 0, c_black, "                                        ");
-   start -= maxitems;
-   if (start < 0)
-    start = 0;
-   mvwprintw(w_inv, maxitems + 2, 0, "         ");
-  }
-  if (ch == '>' && cur_it < u.inv.size()) { // Clear lines and shift
-   start = cur_it;
-   mvwprintw(w_inv, maxitems + 2, 12, "            ");
-   for (int i = 1; i < 25; i++)
-    mvwprintz(w_inv, i, 0, c_black, "                                        ");
-  }
-  int cur_line = 2;
-  for (cur_it = start; cur_it < start + maxitems && cur_line < 23; cur_it++) {
-// Clear the current line;
-   mvwprintw(w_inv, cur_line, 0, "                                    ");
-// Print category header
-   for (int i = 0; i < 8; i++) {
-    if (cur_it == firsts[i]) {
-     mvwprintz(w_inv, cur_line, 0, c_magenta, CATEGORIES[i].c_str());
-     cur_line++;
+    for (std::vector< std::pair<item,size_t> >::const_iterator anItem = inventory.begin() + (pageSize * page); ((anItem != inventory.begin() + (pageSize * (page + 1))) && (anItem != inventory.end())); ++anItem) {
+      const item& thisItem = anItem->first;
+
+      mvwputch(w_inv, currentLine + 2, 0, c_white, 'a' + currentLine);
+      mvwputch(w_inv, currentLine + 2, 2, c_white, '-');
+      mvwprintz(w_inv, currentLine + 2, 4, thisItem.color_in_inventory(NULL), thisItem.tname(this).c_str());
+      if (thisItem.charges > 0) {
+        wprintw(w_inv, " (%d)", thisItem.charges);
+      } else if (thisItem.contents.size() == 1 && thisItem.contents[0].charges) {
+        wprintw(w_inv, " (%d)", thisItem.contents[0].charges);
+      }
+      if (anItem->second > 1)
+        wprintw(w_inv, " [%d]", anItem->second);
+
+      ++currentLine;
     }
-   }
-   if (cur_it < u.inv.size()) {
-    mvwputch (w_inv, cur_line, 0, c_white, u.inv[cur_it].invlet);
-    mvwprintz(w_inv, cur_line, 1, u.inv[cur_it].color_in_inventory(&u), " %s",
-              u.inv[cur_it].tname(this).c_str());
-    if (u.inv.stack_at(cur_it).size() > 1)
-     wprintw(w_inv, " [%d]", u.inv.stack_at(cur_it).size());
-    if (u.inv[cur_it].charges > 0)
-     wprintw(w_inv, " (%d)", u.inv[cur_it].charges);
-    else if (u.inv[cur_it].contents.size() == 1 &&
-             u.inv[cur_it].contents[0].charges > 0)
-     wprintw(w_inv, " (%d)", u.inv[cur_it].contents[0].charges);
-   }
-   cur_line++;
-  }
-  if (start > 0)
-   mvwprintw(w_inv, maxitems + 4, 0, "< Go Back");
-  if (cur_it < u.inv.size())
-   mvwprintw(w_inv, maxitems + 4, 12, "> More items");
-  wrefresh(w_inv);
-  ch = getch();
- } while (ch == '<' || ch == '>');
- werase(w_inv);
- delwin(w_inv);
- erase();
- refresh_all();
- return ch;
-*/
+
+    if (page > 0)
+      mvwprintw(w_inv, pageSize + 4, 0, "< Go Back");
+
+    if (inventory.size() > (page + 1) * pageSize)
+      mvwprintw(w_inv, pageSize + 4, 12, "> More items");
+
+    wrefresh(w_inv);
+    ch = getch();
+  } while (ch == '<' || ch == '>');
+
+  werase(w_inv);
+  delwin(w_inv);
+  erase();
+  refresh_all();
+  return ch;
 }
 
 char game::inv_type(std::string title, int inv_item_type)
