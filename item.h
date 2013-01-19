@@ -47,7 +47,7 @@ public:
  bool reload(player &u, int index);
  void next_mode();
 
- std::string save_info();	// Formatted for save files
+ std::string save_info() const;	// Formatted for save files
  void load_info(std::string data, game *g);
  std::string info(bool showtext = false);	// Formatted for human viewing
  char symbol();

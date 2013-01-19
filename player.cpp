@@ -654,13 +654,15 @@ std::string player::save_info()
 
  dump << std::endl;
 
- for (int i = 0; i < inv.size(); i++) {
-  for (int j = 0; j < inv.stack_at(i).size(); j++) {
-   dump << "I " << inv.stack_at(i)[j].save_info() << std::endl;
-   for (int k = 0; k < inv.stack_at(i)[j].contents.size(); k++)
-    dump << "C " << inv.stack_at(i)[j].contents[k].save_info() << std::endl;
-  }
+ for (int i = 0; i < _inventory.items().size(); i++) {
+   for (int j = 0; j < _inventory.items()[i].second; j++) {
+     dump << "I " << _inventory.items()[i].first.save_info() << std::endl;
+     for (int k = 0; k < _inventory.items()[i].first.contents.size(); k++) {
+       dump << "C " << _inventory.items()[i].first.contents[k].save_info() << std::endl;
+     }
+   }
  }
+
  for (int i = 0; i < worn.size(); i++)
   dump << "W " << worn[i].save_info() << std::endl;
  if (!weapon.is_null())

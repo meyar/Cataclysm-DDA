@@ -1859,6 +1859,11 @@ void game::load(std::string name)
     u.weapon.contents.push_back(item(itemdata, this));
   }
  }
+
+ for (int i = 0; i < tmpinv.size(); i++) {
+   u._inventory.addItem(tmpinv[i]);
+ }
+
 // Now dump tmpinv into the player's inventory
  u.inv.add_stack(tmpinv);
  fin.close();

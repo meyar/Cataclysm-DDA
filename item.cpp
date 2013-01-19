@@ -268,7 +268,7 @@ void item::put_in(item payload)
  contents.push_back(payload);
 }
 
-std::string item::save_info()
+std::string item::save_info() const
 {
  if (type == NULL)
   debugmsg("Tried to save an item with NULL type!");
@@ -294,11 +294,14 @@ std::string item::save_info()
  else
   dump << " -1";
  dump << " " << mission_id << " " << player_id;
+
+ /*
  size_t pos = name.find_first_of("\n");
  while (pos != std::string::npos)  {
   name.replace(pos, 1, "@@");
   pos = name.find_first_of("\n");
  }
+ */
  dump << " '" << name << "'";
  return dump.str();
 }
