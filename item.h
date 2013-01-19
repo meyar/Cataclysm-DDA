@@ -28,8 +28,8 @@ public:
  item in_its_container(std::vector<itype*> *itypes);
 
  nc_color color(player *u);
- nc_color color_in_inventory(player *u);
- std::string tname(game *g = NULL); // g needed for rotten-test
+ nc_color color_in_inventory(player *u) const;
+ std::string tname(game *g = NULL) const; // g needed for rotten-test
  void use(player &u);
  bool burn(int amount = 1); // Returns true if destroyed
 
@@ -90,7 +90,7 @@ public:
  bool is_food(player *u);// Some non-food items are food to certain players
  bool is_food_container(player *u);  // Ditto
  bool is_food() const;          // Ignoring the ability to eat batteries, etc.
- bool is_food_container();      // Ignoring the ability to eat batteries, etc.
+ bool is_food_container() const;      // Ignoring the ability to eat batteries, etc.
  bool is_ammo_container();      
  bool is_drink();
  bool is_weap();

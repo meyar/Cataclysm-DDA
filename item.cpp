@@ -145,7 +145,7 @@ void item::make_corpse(itype* it, mtype* mt, unsigned int turn)
 itype * item::nullitem_m = new itype();
 itype * item::nullitem()
 {
-    return nullitem_m;
+  return NULL;
 }
 
 item::item(std::string itemdata, game *g)
@@ -587,7 +587,7 @@ nc_color item::color(player *u)
  return ret;
 }
 
-nc_color item::color_in_inventory(player *u)
+nc_color item::color_in_inventory(player *u) const
 {
 // Items in our inventory get colorized specially
  nc_color ret = c_white;
@@ -597,7 +597,7 @@ nc_color item::color_in_inventory(player *u)
  return ret;
 }
 
-std::string item::tname(game *g)
+std::string item::tname(game *g) const
 {
  std::stringstream ret;
 
@@ -1123,7 +1123,7 @@ bool item::is_food() const
  return false;
 }
 
-bool item::is_food_container()
+bool item::is_food_container() const
 {
  return (contents.size() >= 1 && contents[0].is_food());
 }

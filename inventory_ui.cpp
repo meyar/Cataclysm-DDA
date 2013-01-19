@@ -28,7 +28,7 @@ void print_inv_statics(game *g, WINDOW* w_inv, std::string title,
  if (g->u.volume_carried() > g->u.volume_capacity() - 2)
   wprintz(w_inv, c_red, "%d", g->u.volume_carried());
  else
-  wprintz(w_inv, c_ltgray, "%d", g->u.volume_carried());
+   wprintz(w_inv, c_ltgray, "%d", g->u._inventory.volume());
  wprintw(w_inv, "/%d", g->u.volume_capacity() - 2);
 
 // Print our weapon
@@ -109,6 +109,44 @@ char game::inv(std::string title)
  u.inv.restack(&u);
  std::vector<char> null_vector;
  print_inv_statics(this, w_inv, title, null_vector);
+
+ const Inventory& inventory = u._inventory;
+
+ int page = 0;
+
+ do {
+   int currentLine = 2;
+
+   for (
+        std::vector< std::pair<item,size_t> >::const_iterator anItem = inventory.items().begin() + (maxitems * page);
+        anItem != inventory.items().end();
+        //((anItem != inventory.items().begin() + (maxitems * (page + 1))) && (anItem != inventory.items().end()));
+        ++anItem
+        ) {
+     const item& thisItem = anItem->first;
+
+     mvwprintz(w_inv, currentLine, 0, thisItem.color_in_inventory(NULL), thisItem.tname(this).c_str());
+     if (thisItem.charges > 0) {
+       wprintw(w_inv, " (%d)", thisItem.charges);
+     } else if (thisItem.contents.size() == 1 && thisItem.contents[0].charges) {
+       wprintw(w_inv, " (%d)", thisItem.contents[0].charges);
+     }
+     if (anItem->second)
+       wprintw(w_inv, " [%d]", anItem->second);
+
+     ++currentLine;
+   }
+   wrefresh(w_inv);
+   ch = getch();
+ } while (ch == '<' || ch == '>');
+
+ werase(w_inv);
+ delwin(w_inv);
+ erase();
+ refresh_all();
+ return ch;
+
+/*
 // Gun, ammo, weapon, armor, food, tool, book, other
  std::vector<int> firsts = find_firsts(u.inv);
 
@@ -164,6 +202,7 @@ char game::inv(std::string title)
  erase();
  refresh_all();
  return ch;
+*/
 }
 
 char game::inv_type(std::string title, int inv_item_type)

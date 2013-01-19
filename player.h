@@ -296,6 +296,7 @@ public:
  
  bool inv_sorted;
  //std::vector <item> inv;
+ Inventory _inventory;
  inventory inv;
  itype_id last_item;
  std::vector <item> worn;

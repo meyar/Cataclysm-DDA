@@ -495,7 +495,7 @@ void inventory::assign_empty_invlet(item &it, player *p)
 
 
 uint32_t Inventory::volume() const {
-  uint32_t volume;
+  uint32_t volume = 0;
 
   for (std::vector< std::pair<item,size_t> >::const_iterator anItem = _inventory.begin(); anItem != _inventory.end(); ++anItem) {
     volume += anItem->first.volume() * anItem->second;
@@ -505,7 +505,7 @@ uint32_t Inventory::volume() const {
 }
 
 uint32_t Inventory::weight() const {
-  uint32_t weight;
+  uint32_t weight = 0;
 
   for (std::vector< std::pair<item,size_t> >::const_iterator anItem = _inventory.begin(); anItem != _inventory.end(); ++anItem) {
     weight += anItem->first.weight() * anItem->second;
@@ -525,19 +525,25 @@ bool Inventory::addItem(item i, size_t count) {
   if (!fits(i, count))
     return false;
 
-  for (std::vector< std::pair<item,size_t> >::iterator anItem = _inventory.begin(); anItem != _inventory.end(); ++anItem) {
-    if (anItem->first < i) {
-      continue;
-    } else if (anItem->first == i) {
-      anItem->second += count;
-      break;
-    } else {
-      std::pair<item,size_t> newItem = std::pair<item,size_t>(i, count);
+  if (_inventory.size()) {
+    for (std::vector< std::pair<item,size_t> >::iterator anItem = _inventory.begin(); anItem != _inventory.end(); ++anItem) {
+      if (anItem->first < i) {
+        continue;
+      } else if (anItem->first == i) {
+        anItem->second += count;
+        return true;
+      } else {
+        std::pair<item,size_t> newItem = std::pair<item,size_t>(i, count);
 
-      _inventory.insert(anItem, newItem);
-      break;
+        _inventory.insert(anItem, newItem);
+        return true;
+      }
     }
   }
+
+  std::pair<item,size_t> newItem = std::pair<item,size_t>(i, count);
+
+  _inventory.push_back(newItem);
 
   return true;
 }

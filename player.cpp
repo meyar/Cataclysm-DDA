@@ -3122,6 +3122,10 @@ void player::sort_inv()
 
 void player::i_add(item it, game *g)
 {
+  _inventory.addItem(it);
+
+  return;
+
  int item_type_id = itm_null;
  if( it.type ) item_type_id = it.type->id;
 
