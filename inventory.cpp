@@ -502,11 +502,11 @@ uint32_t Inventory::weight() {
   return 0;
 }
 
-bool Inventory::fits(const item& i) {
+bool Inventory::fits(const item& i, size_t count) {
   return false;
 }
 
-bool Inventory::addItem(item i) {
+bool Inventory::addItem(item i, size_t count) {
   return false;
 }
 

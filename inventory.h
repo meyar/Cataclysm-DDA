@@ -30,9 +30,11 @@ class Inventory {
   uint32_t volume();
   uint32_t weight();
 
-  bool fits(const item& i);
+  bool fits(const item& i) { return fits(i, 1); }
+  bool fits(const item& i, size_t count);
 
-  bool addItem (item i);
+  bool addItem (item i) { return addItem(i, 1); }
+  bool addItem (item i, size_t count);
   item removeItem(size_t index, size_t count, size_t& removed);
 };
 
