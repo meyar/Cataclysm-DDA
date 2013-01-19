@@ -725,7 +725,7 @@ int item::price()
  return ret;
 }
 
-int item::weight()
+int item::weight() const
 {
  if (typeId() == itm_corpse) {
   int ret;
@@ -775,7 +775,7 @@ int item::weight()
  return ret;
 }
 
-int item::volume()
+int item::volume() const
 {
  if (typeId() == itm_corpse) {
   switch (corpse->size) {
@@ -909,7 +909,7 @@ bool item::goes_bad() const
  return (food->spoils != 0);
 }
 
-bool item::count_by_charges()
+bool item::count_by_charges() const
 {
  if (is_ammo())
   return true;
@@ -1025,7 +1025,7 @@ bool item::is_two_handed(player *u)
  return (weight() > u->str_cur * 4);
 }
 
-bool item::made_of(material mat)
+bool item::made_of(material mat) const
 {
  if( is_null() )
   return false;
@@ -1056,7 +1056,7 @@ bool item::destroyed_at_zero_charges()
  return (is_ammo() || is_food());
 }
 
-bool item::is_gun()
+bool item::is_gun() const
 {
  if( is_null() )
   return false;
@@ -1080,7 +1080,7 @@ bool item::is_bionic()
  return type->is_bionic();
 }
 
-bool item::is_ammo()
+bool item::is_ammo() const
 {
  if( is_null() )
   return false;
@@ -1768,7 +1768,7 @@ std::ostream & operator<<(std::ostream & out, const item & it)
 }
 
 
-int item::typeId()
+int item::typeId() const
 {
     if ( type == NULL )
         return itm_null;

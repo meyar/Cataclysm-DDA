@@ -58,8 +58,8 @@ public:
  bool stacks_with(item rhs) const;
  void put_in(item payload);
 
- int weight();
- int volume();
+ int weight() const;
+ int volume() const;
  int volume_contained();
  int attack_time();
  int damage_bash();
@@ -70,7 +70,7 @@ public:
  item* active_gunmod();
  std::vector<technique_id> techniques();
  bool goes_bad() const;
- bool count_by_charges();
+ bool count_by_charges() const;
  bool craft_has_charges();
  int num_charges();
  bool rotten(game *g);
@@ -82,7 +82,7 @@ public:
 // Returns the data associated with tech, if we are an it_style
  style_move style_data(technique_id tech);
  bool is_two_handed(player *u);
- bool made_of(material mat);
+ bool made_of(material mat) const;
  bool conductive(); // Electricity
  bool destroyed_at_zero_charges();
 // Most of the is_whatever() functions call the same function in our itype
@@ -96,10 +96,10 @@ public:
  bool is_weap();
  bool is_bashing_weapon();
  bool is_cutting_weapon();
- bool is_gun();
+ bool is_gun() const;
  bool is_gunmod();
  bool is_bionic();
- bool is_ammo();
+ bool is_ammo() const;
  bool is_armor();
  bool is_book();
  bool is_container();
@@ -110,7 +110,7 @@ public:
  bool is_other(); // Doesn't belong in other categories
  bool is_artifact();
 
- int typeId();
+ int typeId() const;
 
  itype*   type;
  mtype*   corpse;

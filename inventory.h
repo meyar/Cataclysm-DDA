@@ -27,15 +27,18 @@ class Inventory {
 
   std::pair<item,size_t> operator[] (size_t index) const { return _inventory[index]; }
 
-  uint32_t volume();
-  uint32_t weight();
+  uint32_t volume() const;
+  uint32_t weight() const;
 
-  bool fits(const item& i) { return fits(i, 1); }
-  bool fits(const item& i, size_t count);
+  bool fits(const item& i) const { return fits(i, 1); }
+  bool fits(const item& i, size_t count) const;
+  bool fits(const std::pair<item,size_t> pair) const { return fits(pair.first, pair.second); }
 
   bool addItem (item i) { return addItem(i, 1); }
   bool addItem (item i, size_t count);
   item removeItem(size_t index, size_t count, size_t& removed);
+
+  bool moveItem(size_t index, size_t count, Inventory& target);
 };
 
 class inventory

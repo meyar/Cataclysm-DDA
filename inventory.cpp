@@ -494,24 +494,82 @@ void inventory::assign_empty_invlet(item &it, player *p)
 }
 
 
-uint32_t Inventory::volume() {
-  return 0;
+uint32_t Inventory::volume() const {
+  uint32_t volume;
+
+  for (std::vector< std::pair<item,size_t> >::const_iterator anItem = _inventory.begin(); anItem != _inventory.end(); ++anItem) {
+    volume += anItem->first.volume() * anItem->second;
+  }
+
+  return volume;
 }
 
-uint32_t Inventory::weight() {
-  return 0;
+uint32_t Inventory::weight() const {
+  uint32_t weight;
+
+  for (std::vector< std::pair<item,size_t> >::const_iterator anItem = _inventory.begin(); anItem != _inventory.end(); ++anItem) {
+    weight += anItem->first.weight() * anItem->second;
+  }
+
+  return weight;
 }
 
-bool Inventory::fits(const item& i, size_t count) {
-  return false;
+bool Inventory::fits(const item& i, size_t count) const {
+  uint32_t addedWeight = i.weight() * count;
+  uint32_t addedVolume = i.volume() * count;
+
+  return (volume() + addedVolume < _maxVolume && weight() + addedWeight < _maxWeight);
 }
 
 bool Inventory::addItem(item i, size_t count) {
-  return false;
+  if (!fits(i, count))
+    return false;
+
+  for (std::vector< std::pair<item,size_t> >::iterator anItem = _inventory.begin(); anItem != _inventory.end(); ++anItem) {
+    if (anItem->first < i) {
+      continue;
+    } else if (anItem->first == i) {
+      anItem->second += count;
+      break;
+    } else {
+      std::pair<item,size_t> newItem = std::pair<item,size_t>(i, count);
+
+      _inventory.insert(anItem, newItem);
+      break;
+    }
+  }
+
+  return true;
 }
 
-item removeItem(size_t index, size_t count, size_t& removed) {
-  removed = 0;
+item Inventory::removeItem(size_t index, size_t count, size_t& removed) {
+  std::vector< std::pair<item,size_t> >::iterator toRemove = _inventory.begin() + index;
 
-  return item();
+  item removedItem = toRemove->first;
+
+  if (count > toRemove->second) {
+    count = toRemove->second;
+    removed = count;
+  } else {
+    removed = count;
+  }
+
+  _inventory.erase(toRemove);
+
+  return removedItem;
+}
+
+bool Inventory::moveItem(size_t index, size_t count, Inventory& target) {
+  std::pair<item,size_t> candidate = _inventory[index];
+
+  if (!target.fits(candidate))
+    return false;
+
+  item itemToMove;
+  size_t countToMove;
+
+  itemToMove = removeItem(index, count, countToMove);
+  target.addItem(itemToMove,countToMove);
+
+  return true;
 }
