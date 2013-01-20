@@ -1354,13 +1354,13 @@ input_ret game::get_input(int timeout_ms)
    break;
 
   case ACTION_INVENTORY: {
-   bool has = false;
    do {
-    char ch = inv();
-    has = u.has_item(ch);
-    if (has)
-     full_screen_popup(u.i_at(ch).info(true).c_str());
-   } while (has);
+     std::vector<size_t> selectedItems = displayInventory();
+
+     if (selectedItems.size()) {
+       full_screen_popup(u._inventory.items()[selectedItems[0]].first.info(true).c_str());
+     } else break;
+   } while (1);
    refresh_all();
   } break;
 

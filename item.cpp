@@ -342,7 +342,7 @@ void item::load_info(std::string data, game *g)
   curammo = NULL;
 }
  
-std::string item::info(bool showtext)
+std::string item::info(bool showtext) const
 {
  std::stringstream dump;
  if( !is_null() )
@@ -814,7 +814,7 @@ int item::volume_contained()
  return ret;
 }
 
-int item::attack_time()
+int item::attack_time() const
 {
  int ret = 65 + 4 * volume() + 2 * weight();
  return ret;
@@ -840,11 +840,11 @@ int item::damage_cut()
  return type->melee_cut;
 }
 
-bool item::has_flag(item_flag f)
+bool item::has_flag(item_flag f) const
 {
  if (is_gun()) {
   if (mode == IF_MODE_AUX) {
-   item* gunmod = active_gunmod();
+   const item* gunmod = active_gunmod();
    if( gunmod != NULL )
     return gunmod->has_flag(f);
   } else {
@@ -932,11 +932,11 @@ bool item::craft_has_charges()
  return false;
 }
 
-int item::num_charges()
+int item::num_charges() const
 {
  if (is_gun()) {
   if (mode == IF_MODE_AUX) {
-   item* gunmod = active_gunmod();
+   const item* gunmod = active_gunmod();
    if (gunmod != NULL)
     return gunmod->charges;
   } else {
@@ -1066,7 +1066,7 @@ bool item::is_gun() const
  return type->is_gun();
 }
 
-bool item::is_gunmod()
+bool item::is_gunmod() const
 {
  if( is_null() )
   return false;
@@ -1130,7 +1130,7 @@ bool item::is_food_container() const
  return (contents.size() >= 1 && contents[0].is_food());
 }
 
-bool item::is_ammo_container()
+bool item::is_ammo_container() const
 {
  return (contents.size() >= 1 && contents[0].is_ammo());
 }
@@ -1170,7 +1170,7 @@ bool item::is_cutting_weapon()
  return (type->melee_cut >= 8 && !has_flag(IF_SPEAR));
 }
 
-bool item::is_armor()
+bool item::is_armor() const
 {
  if( is_null() )
   return false;
@@ -1178,7 +1178,7 @@ bool item::is_armor()
  return type->is_armor();
 }
 
-bool item::is_book()
+bool item::is_book() const
 {
  if( is_null() )
   return false;
@@ -1200,7 +1200,7 @@ bool item::is_container()
  return type->is_container();
 }
 
-bool item::is_tool()
+bool item::is_tool() const
 {
  if( is_null() )
   return false;
@@ -1224,7 +1224,7 @@ bool item::is_macguffin()
  return type->is_macguffin();
 }
 
-bool item::is_style()
+bool item::is_style() const
 {
  if( is_null() )
   return false;
@@ -1277,7 +1277,15 @@ int item::reload_time(player &u)
  return ret;
 }
 
-item* item::active_gunmod()
+item* item::active_gunmod() {
+ if( mode == IF_MODE_AUX )
+  for (int i = 0; i < contents.size(); i++)
+   if (contents[i].is_gunmod() && contents[i].mode == IF_MODE_AUX)
+    return &contents[i];
+ return NULL;
+}
+
+const item* item::active_gunmod() const
 {
  if( mode == IF_MODE_AUX )
   for (int i = 0; i < contents.size(); i++)
@@ -1334,7 +1342,7 @@ void item::next_mode()
  }
 }
 
-int item::clip_size()
+int item::clip_size() const
 {
  if(is_gunmod() && has_flag(IF_MODE_AUX))
   return (dynamic_cast<it_gunmod*>(type))->clip;
@@ -1352,7 +1360,7 @@ int item::clip_size()
  return ret;
 }
 
-int item::accuracy()
+int item::accuracy() const
 {
  if (!is_gun())
   return 0;
@@ -1366,14 +1374,14 @@ int item::accuracy()
  return ret;
 }
 
-int item::gun_damage(bool with_ammo)
+int item::gun_damage(bool with_ammo) const
 {
  if (is_gunmod() && mode == IF_MODE_AUX)
   return curammo->damage;
  if (!is_gun())
   return 0;
  if(mode == IF_MODE_AUX) {
-  item* gunmod = active_gunmod();
+  const item* gunmod = active_gunmod();
   if(gunmod != NULL && gunmod->curammo != NULL)
    return gunmod->curammo->damage;
   else
@@ -1397,7 +1405,7 @@ int item::noise()
   return 0;
  int ret = 0;
  if(mode == IF_MODE_AUX) {
-  item* gunmod = active_gunmod();
+  const item* gunmod = active_gunmod();
   if (gunmod != NULL && gunmod->curammo != NULL)
    ret = gunmod->curammo->damage;
  } else if (curammo != NULL)
@@ -1414,7 +1422,7 @@ int item::noise()
  return ret;
 }
 
-int item::burst_size()
+int item::burst_size() const
 {
  if (!is_gun())
   return 0;
@@ -1432,13 +1440,13 @@ int item::burst_size()
  return ret;
 }
 
-int item::recoil(bool with_ammo)
+int item::recoil(bool with_ammo) const
 {
  if (!is_gun())
   return 0;
  // Just use the raw ammo recoil for now.
  if(mode == IF_MODE_AUX) {
-  item* gunmod = active_gunmod();
+  const item* gunmod = active_gunmod();
   if (gunmod != NULL && gunmod->curammo != NULL)
    return gunmod->curammo->recoil;
   else
@@ -1461,7 +1469,7 @@ int item::range(player *p)
   return 0;
  // Just use the raw ammo range for now.
  if(mode == IF_MODE_AUX) {
-  item* gunmod = active_gunmod();
+  const item* gunmod = active_gunmod();
   if(gunmod != NULL && gunmod->curammo != NULL)
    return gunmod->curammo->range;
   else
@@ -1486,7 +1494,7 @@ int item::range(player *p)
 }
  
 
-ammotype item::ammo_type()
+ammotype item::ammo_type() const
 {
  if (is_gun()) {
   it_gun* gun = dynamic_cast<it_gun*>(type);

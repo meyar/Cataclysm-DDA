@@ -35,21 +35,21 @@ public:
 
 // Firearm specifics
  int reload_time(player &u);
- int clip_size();
- int accuracy();
- int gun_damage(bool with_ammo = true);
+ int clip_size() const;
+ int accuracy() const;
+ int gun_damage(bool with_ammo = true) const;
  int noise();
- int burst_size();
- int recoil(bool with_ammo = true);
+ int burst_size() const;
+ int recoil(bool with_ammo = true) const;
  int range(player *p = NULL);
- ammotype ammo_type();
+ ammotype ammo_type() const;
  int pick_reload_ammo(player &u, bool interactive);
  bool reload(player &u, int index);
  void next_mode();
 
  std::string save_info() const;	// Formatted for save files
  void load_info(std::string data, game *g);
- std::string info(bool showtext = false);	// Formatted for human viewing
+ std::string info(bool showtext = false) const;	// Formatted for human viewing
  char symbol();
  nc_color color();
  int price();
@@ -61,18 +61,19 @@ public:
  int weight() const;
  int volume() const;
  int volume_contained();
- int attack_time();
+ int attack_time() const;
  int damage_bash();
  int damage_cut();
- bool has_flag(item_flag f);
+ bool has_flag(item_flag f) const;
  bool has_technique(technique_id t, player *p = NULL);
  int has_gunmod(int type);
+ const item* active_gunmod() const;
  item* active_gunmod();
  std::vector<technique_id> techniques();
  bool goes_bad() const;
  bool count_by_charges() const;
  bool craft_has_charges();
- int num_charges();
+ int num_charges() const;
  bool rotten(game *g);
 
 // Our value as a weapon, given particular skills
@@ -91,22 +92,22 @@ public:
  bool is_food_container(player *u);  // Ditto
  bool is_food() const;          // Ignoring the ability to eat batteries, etc.
  bool is_food_container() const;      // Ignoring the ability to eat batteries, etc.
- bool is_ammo_container();      
+ bool is_ammo_container() const;
  bool is_drink();
  bool is_weap();
  bool is_bashing_weapon();
  bool is_cutting_weapon();
  bool is_gun() const;
- bool is_gunmod();
+ bool is_gunmod() const;
  bool is_bionic();
  bool is_ammo() const;
- bool is_armor();
- bool is_book();
+ bool is_armor() const;
+ bool is_book() const;
  bool is_container();
- bool is_tool();
+ bool is_tool() const;
  bool is_software();
  bool is_macguffin();
- bool is_style();
+ bool is_style() const;
  bool is_other(); // Doesn't belong in other categories
  bool is_artifact();
 
