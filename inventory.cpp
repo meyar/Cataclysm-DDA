@@ -527,15 +527,8 @@ bool Inventory::addItem(item i, size_t count) {
 
   if (_inventory.size()) {
     for (std::vector< std::pair<item,size_t> >::iterator anItem = _inventory.begin(); anItem != _inventory.end(); ++anItem) {
-      if (anItem->first < i) {
-        continue;
-      } else if (anItem->first == i) {
+      if (anItem->first == i) {
         anItem->second += count;
-        return true;
-      } else {
-        std::pair<item,size_t> newItem = std::pair<item,size_t>(i, count);
-
-        _inventory.insert(anItem, newItem);
         return true;
       }
     }
